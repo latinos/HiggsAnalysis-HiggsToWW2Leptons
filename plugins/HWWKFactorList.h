@@ -45,18 +45,12 @@ class HWWKfactorList : public TH1D {
 
   /// print this map
   friend std::ostream& operator<<(std::ostream& out, const HWWKfactorList& rm);
-
-
-  // get alternative Kfactor
-  inline double GetAlterKfactor() { return alternativeK_;};
-  inline double GetAlterNNLOKfactor() { return alternativeNNLOK_;};
   
  private:
   static const unsigned lineSize_;
-  std::string           mapFile_;
 
-  double                alternativeK_;
-  double                alternativeNNLOK_;
+  std::string           mapFile_;
+  
 };
 
 #endif

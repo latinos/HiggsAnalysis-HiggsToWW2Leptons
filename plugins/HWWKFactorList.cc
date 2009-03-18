@@ -13,7 +13,7 @@ const unsigned HWWKfactorList::lineSize_ = 10000;
 
 HWWKfactorList::HWWKfactorList(const char* name, unsigned nbinspt,
                                double minpt, double maxpt, double value)
-  : TH1D(name, name, nbinspt, minpt, maxpt), alternativeK_(1.), alternativeNNLOK_(1.)
+    : TH1D(name, name, nbinspt, minpt, maxpt)
 {
 
   GetXaxis()->SetTitle("#pt");
@@ -29,7 +29,6 @@ HWWKfactorList::HWWKfactorList(const char* name, unsigned nbinspt,
 }
 
 HWWKfactorList::HWWKfactorList(const char* name, const char* mapfile)
-  : alternativeK_(1.), alternativeNNLOK_(1.)
 {
 
   SetTitle(mapfile);
@@ -81,12 +80,9 @@ bool HWWKfactorList::ReadMapFile(const char* mapfile)
   int nbinspt=0;
   double minpt=0;
   double maxpt=0;
-  std::string dummy;
-  inf>>nbinspt;inf>>dummy;
-  inf>>minpt;inf>>dummy;
-  inf>>maxpt;inf>>dummy;
-  inf>>this->alternativeK_;inf>>dummy;
-  inf>>this->alternativeNNLOK_;inf>>dummy;inf>>dummy;
+  inf>>nbinspt;
+  inf>>minpt;
+  inf>>maxpt;
   SetBins(nbinspt, minpt, maxpt);
 
   char s[lineSize_];

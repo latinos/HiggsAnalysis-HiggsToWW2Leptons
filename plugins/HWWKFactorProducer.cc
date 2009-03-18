@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Joanna Weng
 //         Created:  Fri Feb  1 15:30:42 CET 2008
-// $Id: HWWKFactorProducer.cc,v 1.1 2008/02/21 10:42:30 weng Exp $
+// $Id$
 //
 //
 
@@ -52,20 +52,14 @@ HWWKFactorProducer::HWWKFactorProducer(const edm::ParameterSet& iConfig): pt_his
   inputFilename_=iConfig.getUntrackedParameter<std::string>("inputFilename","dummy.root");  
   processID_ = iConfig.getUntrackedParameter<int>("ProcessID",0);  
   debug_ = iConfig.getUntrackedParameter<bool>("Debug",0);
-  useNNLO_ = iConfig.getUntrackedParameter<bool>("UseNNLO",false);
   edm::FileInPath path_inputFilename(inputFilename_.c_str());
   pt_histo_ = new  HWWKfactorList("KFactorList", path_inputFilename.fullPath().c_str() );
 
-  // add possibility of alternative processes (VBF)
-  std::vector<int> defpid1;
-  defpid1.push_back(-1);
-  altProcessID_ = iConfig.getUntrackedParameter<std::vector<int> >("AltProcessID",defpid1);
 }
 
 
 HWWKFactorProducer::~HWWKFactorProducer()
-{
-}
+{}
 
 // ------------ method called to for each event  ------------
 void HWWKFactorProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
@@ -97,15 +91,13 @@ void HWWKFactorProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
 	higgs.push_back(*it);
     }
     //Print the complete table
-    //if (debug_) std::cout << (*pt_histo_);
+    if (debug_) std::cout << (*pt_histo_);
     math::XYZTLorentzVector tot_momentum(higgs[0]->momentum());
     //calculate bin size
     double binsize = pt_histo_->GetXaxis()->GetXmax() /pt_histo_->GetNbinsX();
     double higgspt = tot_momentum.pt();
     // which bin ?
-    int bin=int ((higgspt /binsize)) + 1 ;
-    // overflow protection: use last entry
-    if(bin>pt_histo_->GetNbinsX()) bin=pt_histo_->GetNbinsX();
+    int bin=int ((higgspt /binsize)) ;
     if (debug_){
     std::cout <<" Bin Size "<< binsize <<std::endl;
     std::cout <<" Higgs Pt "<< higgspt <<std::endl;
@@ -114,20 +106,9 @@ void HWWKFactorProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
     }
     // get KFactor
     *pweight=  pt_histo_->GetBinContent(bin);
-  } else {
-    bool isAlter=false;
-    for(unsigned int j=0; j<altProcessID_.size(); ++j)
-      if(evt->signal_process_id()==altProcessID_[j]) isAlter=true;
-    if(isAlter)  {
-      if(!useNNLO_)
-	*pweight=  pt_histo_->GetAlterKfactor();
-      else
-	*pweight=  pt_histo_->GetAlterNNLOKfactor();
-      if(debug_) std::cout <<" KFactor "<< *pweight <<std::endl;
-    }
+    delete evt;
   }
   iEvent.put(pweight);
-  delete evt;  
 }
 
 // ------------ method called once each job just before starting event loop  ------------

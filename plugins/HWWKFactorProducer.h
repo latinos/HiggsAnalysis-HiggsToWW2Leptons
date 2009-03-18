@@ -20,8 +20,6 @@
 #include "TH1D.h"
 #include "TFile.h"
 
-#include <vector>
-
 //
 // class decleration
 //
@@ -41,11 +39,8 @@ class HWWKFactorProducer : public edm::EDProducer {
      
   std::string inputFilename_;
   int  processID_;
-  std::vector<int> altProcessID_;
   HWWKfactorList* pt_histo_;
   bool debug_;
-  // use NNLO for alternative Kfactors?
-  bool useNNLO_;
 };
 
 #endif
